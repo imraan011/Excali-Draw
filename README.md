@@ -1,4 +1,4 @@
-# ExcaliClone
+# Excali Draw
 
 A lightweight, browser-based drawing board (like Excalidraw) built from scratch using vanilla HTML, CSS, and JavaScript (ES Modules) without frameworks or bundlers.
 
@@ -11,7 +11,7 @@ A lightweight, browser-based drawing board (like Excalidraw) built from scratch 
 
 ## Folder Structure
 ```
-excaliclone/
+Excali Draw/
 ├── index.html               # Main HTML entry
 ├── styles/
 │   └── main.css             # Main styling & UI components
@@ -30,14 +30,14 @@ excaliclone/
 Due to security policies in modern web browsers, running files directly using the `file://` protocol will result in CORS blocks on ES modules.
 
 ### Option 1: Using Node.js
-Serve the `excaliclone` directory locally:
+Serve the project directory locally:
 ```bash
-npx serve excaliclone
+npx serve
 ```
 
 ### Option 2: Using Python
 Serve the folder using Python's built-in server:
 ```bash
-python -m http.server -d excaliclone 3000
+python -m http.server 3000
 ```
 Navigate to `http://localhost:3000` to preview.
