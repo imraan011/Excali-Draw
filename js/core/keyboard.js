@@ -1,5 +1,6 @@
 // Keyboard event handlers mapping logic
 import { state } from "./state.js";
+import { exportAsJSON } from "../persistence/exportImport.js";
 
 // Spacebar held state variables tracker
 let isSpacePressed = false;
@@ -13,7 +14,7 @@ export function getIsSpacePressed() {
 }
 
 /**
- * Key press shortcuts (Delete, Backspace, Escape, Zoom resets, Spacebar panning) registers
+ * Key press shortcuts registers
  */
 export function initKeyboard() {
   window.addEventListener("keydown", (e) => {
@@ -31,7 +32,6 @@ export function initKeyboard() {
       
       const canvasEl = document.getElementById("app-canvas");
       if (canvasEl) {
-        // Change cursor to grab to signal panning capability
         canvasEl.style.cursor = "grab";
       }
       
@@ -41,32 +41,79 @@ export function initKeyboard() {
 
     if (isInput) return;
 
+    const keyLower = e.key.toLowerCase();
+    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+    // Delete or Backspace -> Delete selection
     if (e.key === "Delete" || e.key === "Backspace") {
       if (state.selectedShapeIds.length > 0) {
         state.deleteSelected();
       }
-    } else if (e.key === "Escape") {
+    } 
+    // Escape -> Deselect all
+    else if (e.key === "Escape") {
       state.setSelection([]);
-    } else if ((e.ctrlKey || e.metaKey) && e.key === "0") {
-      // Zoom resets to default values
+    } 
+    // Ctrl+S -> Export to JSON
+    else if (isCtrlOrCmd && keyLower === "s") {
+      e.preventDefault();
+      exportAsJSON();
+    }
+    // Ctrl+0 -> Reset zoom
+    else if (isCtrlOrCmd && e.key === "0") {
       e.preventDefault();
       state.setViewport({ x: 0, y: 0, zoom: 1 });
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
-      // Undo shortcut trigger mapping
-      e.preventDefault();
-      state.undo();
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
-      // Redo shortcut trigger mapping
+    } 
+    // Ctrl+Shift+Z or Ctrl+Y -> Redo
+    else if (isCtrlOrCmd && ((e.shiftKey && keyLower === "z") || keyLower === "y")) {
       e.preventDefault();
       state.redo();
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
-      // Copy shortcut trigger mapping
+    } 
+    // Ctrl+Z -> Undo
+    else if (isCtrlOrCmd && keyLower === "z" && !e.shiftKey) {
+      e.preventDefault();
+      state.undo();
+    } 
+    // Ctrl+C -> Copy
+    else if (isCtrlOrCmd && keyLower === "c") {
       e.preventDefault();
       state.copy();
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") {
-      // Paste shortcut trigger mapping
+    } 
+    // Ctrl+V -> Paste
+    else if (isCtrlOrCmd && keyLower === "v") {
       e.preventDefault();
       state.paste();
+    }
+    // Tool Switching Shortcuts (No modifier keys should be held)
+    else if (!isCtrlOrCmd && !e.altKey && !e.shiftKey) {
+      // 1 or V -> Select
+      if (e.key === "1" || keyLower === "v") {
+        state.setTool("select");
+      }
+      // 2 or R -> Rectangle
+      else if (e.key === "2" || keyLower === "r") {
+        state.setTool("rectangle");
+      }
+      // 3 or O -> Ellipse (Oval)
+      else if (e.key === "3" || keyLower === "o") {
+        state.setTool("ellipse");
+      }
+      // 4 or L -> Line
+      else if (e.key === "4" || keyLower === "l") {
+        state.setTool("line");
+      }
+      // 5 or A -> Arrow
+      else if (e.key === "5" || keyLower === "a") {
+        state.setTool("arrow");
+      }
+      // 6 or P -> Pencil
+      else if (e.key === "6" || keyLower === "p") {
+        state.setTool("pencil");
+      }
+      // H -> Hand Tool
+      else if (keyLower === "h") {
+        state.setTool("hand");
+      }
     }
   });
 

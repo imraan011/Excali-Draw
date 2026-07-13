@@ -3,6 +3,7 @@ import { screenToWorld, worldToScreen } from "../core/coordinates.js";
 import { getShapeBounds } from "../shapes/bounds.js";
 import { getShapeAtPoint, getShapesInRect } from "../shapes/hitTest.js";
 import { requestRender } from "../core/canvas.js";
+import { captureBeforeState, pushHistory, discardBeforeState } from "../core/history.js";
 
 // Selection pointer tracking closure variables
 let activeMode = null; // 'moving' | 'resizing' | 'multi_selecting' | null
@@ -12,6 +13,7 @@ let selectedShape = null;
 let startWorldPos = null;
 let originalShapeState = null;
 let originalBounds = null;
+let hasDragged = false;
 
 // Multi-select selection box coordinates (world coordinates)
 let selectionBox = null;
@@ -56,6 +58,7 @@ export const selectTool = {
     activeMode = null;
     grabbedHandle = null;
     selectedShape = null;
+    hasDragged = false;
 
     // Pehle check karein ki click kisi already selected shape ke handle par to nahi hai
     if (state.selectedShapeIds.length > 0) {
@@ -72,6 +75,7 @@ export const selectTool = {
           
           // Original properties structure backup save karein scaling ke liye
           originalShapeState = JSON.parse(JSON.stringify(activeShape));
+          captureBeforeState();
           return;
         }
       }
@@ -99,6 +103,8 @@ export const selectTool = {
           state: found ? JSON.parse(JSON.stringify(found)) : null
         };
       }).filter(item => item.state !== null);
+      
+      captureBeforeState();
     } else {
       // Empty canvas area check pe multi-select selection box mode trigger karein
       state.setSelection([]);
@@ -111,11 +117,47 @@ export const selectTool = {
   },
 
   onPointerMove(e) {
-    if (!activeMode || !startWorldPos) return;
+    if (!activeMode || !startWorldPos) {
+      const canvasEl = document.getElementById("app-canvas");
+      if (canvasEl) {
+        const worldPos = screenToWorld(e.clientX, e.clientY, state.viewport);
+        let cursorSet = false;
+
+        if (state.selectedShapeIds.length > 0) {
+          const activeShapeId = state.selectedShapeIds[0];
+          const activeShape = state.shapes.find(s => s.id === activeShapeId);
+
+          if (activeShape) {
+            const handle = getHandleAtPoint(activeShape, e.clientX, e.clientY, state.viewport);
+            if (handle) {
+              canvasEl.style.cursor = (handle === "tl" || handle === "br") ? "nwse-resize" : "nesw-resize";
+              cursorSet = true;
+            } else {
+              const hitShape = getShapeAtPoint([activeShape], worldPos.x, worldPos.y);
+              if (hitShape) {
+                canvasEl.style.cursor = "move";
+                cursorSet = true;
+              }
+            }
+          }
+        }
+
+        if (!cursorSet) {
+          const hitAny = getShapeAtPoint(state.shapes, worldPos.x, worldPos.y);
+          canvasEl.style.cursor = hitAny ? "pointer" : "default";
+        }
+      }
+      return;
+    }
 
     const currentWorldPos = screenToWorld(e.clientX, e.clientY, state.viewport);
     const deltaX = currentWorldPos.x - startWorldPos.x;
     const deltaY = currentWorldPos.y - startWorldPos.y;
+
+    // Track if drag actually happened
+    if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
+      hasDragged = true;
+    }
 
     if (activeMode === "multi_selecting") {
       const x = Math.min(startWorldPos.x, currentWorldPos.x);
@@ -232,8 +274,10 @@ export const selectTool = {
 
   onPointerUp(e) {
     // Modify activity complete hone par history snap select push karein
-    if (activeMode === "moving" || activeMode === "resizing") {
-      state.pushUndo();
+    if ((activeMode === "moving" || activeMode === "resizing") && hasDragged) {
+      pushHistory();
+    } else {
+      discardBeforeState();
     }
 
     activeMode = null;
@@ -244,6 +288,7 @@ export const selectTool = {
     originalBounds = null;
     selectionBox = null;
     originalShapesStates = [];
+    hasDragged = false;
     
     requestRender();
   }

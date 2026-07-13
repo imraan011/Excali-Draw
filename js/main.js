@@ -12,6 +12,7 @@ import { loadFromLocalStorage } from "./persistence/localStorage.js";
 import { initAutosave } from "./persistence/autosave.js";
 import { exportAsJSON, importFromJSON } from "./persistence/exportImport.js";
 import { exportAsPNG } from "./persistence/exportPNG.js";
+import { getHistoryStatus } from "./core/history.js";
 import { showConfirm } from "./ui/modal.js";
 
 // LocalStorage startup initialization load
@@ -103,13 +104,42 @@ function updateCanvasCursor() {
   }
 }
 
+function updateHistoryUI() {
+  const undoBtn = document.getElementById("undo-btn");
+  const redoBtn = document.getElementById("redo-btn");
+  if (undoBtn && redoBtn) {
+    const status = getHistoryStatus();
+    undoBtn.disabled = !status.canUndo;
+    redoBtn.disabled = !status.canRedo;
+  }
+}
+
 // State changes ko subscribe karo update re-rendering aur UI sync ke liye
 state.subscribe(() => {
   requestRender();
   updateToolbarUI();
   updateZoomUI();
   updateCanvasCursor();
+  updateHistoryUI();
 });
+
+// Undo/Redo button event listeners
+const undoBtn = document.getElementById("undo-btn");
+if (undoBtn) {
+  undoBtn.addEventListener("click", () => {
+    state.undo();
+  });
+}
+
+const redoBtn = document.getElementById("redo-btn");
+if (redoBtn) {
+  redoBtn.addEventListener("click", () => {
+    state.redo();
+  });
+}
+
+// Initialize history buttons status
+updateHistoryUI();
 
 // Autosave system initialize
 initAutosave();

@@ -2,6 +2,7 @@ import { state } from "../core/state.js";
 import { screenToWorld } from "../core/coordinates.js";
 import { createShape } from "../shapes/Shape.js";
 import { requestRender } from "../core/canvas.js";
+import { captureBeforeState, pushHistory, discardBeforeState } from "../core/history.js";
 
 // Closure scope variables for pencil drawing state
 let activeShapeId = null;
@@ -11,6 +12,9 @@ export const pencilTool = {
   name: "pencil",
 
   onPointerDown(e) {
+    // Capture state before freehand stroke starts
+    captureBeforeState();
+
     // Current click coordinates ko transform karein
     const coords = screenToWorld(e.clientX, e.clientY, state.viewport);
     lastRecordedPos = coords;
@@ -47,7 +51,13 @@ export const pencilTool = {
   },
 
   onPointerUp(e) {
-    if (!activeShapeId) return;
+    if (!activeShapeId) {
+      discardBeforeState();
+      return;
+    }
+
+    // Push the drawing action to history
+    pushHistory();
 
     // Final references cleanup. Single click (points.length === 1) dot form me save rahega.
     activeShapeId = null;

@@ -21,31 +21,38 @@
 
   <!-- Drawing tools toolbar (center, top) — icon-only -->
   <div id="toolbar" role="toolbar" aria-label="Drawing Tools">
-    <button data-tool="select" class="active" data-tooltip="Select">
+    <button data-tool="select" class="active" data-tooltip="Select (V or 1)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></svg>
     </button>
-    <button data-tool="hand" data-tooltip="Hand (Space+Drag)">
+    <button data-tool="hand" data-tooltip="Hand (H or Space)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8l-1-1a2 2 0 0 0-3 3l4 4a6 6 0 0 0 6 0l1-1a6 6 0 0 0 1-3.5V11a2 2 0 0 0-2-2z"/></svg>
     </button>
     <span class="toolbar-separator"></span>
-    <button data-tool="rectangle" data-tooltip="Rectangle (R)">
+    <button data-tool="rectangle" data-tooltip="Rectangle (R or 2)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
     </button>
-    <button data-tool="ellipse" data-tooltip="Ellipse (E)">
+    <button data-tool="ellipse" data-tooltip="Ellipse (O or 3)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="7"/></svg>
     </button>
-    <button data-tool="line" data-tooltip="Line">
+    <button data-tool="line" data-tooltip="Line (L or 4)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
     </button>
-    <button data-tool="arrow" data-tooltip="Arrow">
+    <button data-tool="arrow" data-tooltip="Arrow (A or 5)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="8 5 19 5 19 16"/></svg>
     </button>
     <span class="toolbar-separator"></span>
-    <button data-tool="pencil" data-tooltip="Pencil (P)">
+    <button data-tool="pencil" data-tooltip="Pencil (P or 6)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
     </button>
     <button data-tool="eraser" data-tooltip="Eraser">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16l10-10 7 7-2.5 2.5"/><path d="M6 11l7 7"/></svg>
+    </button>
+    <span class="toolbar-separator"></span>
+    <button id="undo-btn" data-tooltip="Undo (Ctrl+Z)" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+    </button>
+    <button id="redo-btn" data-tooltip="Redo (Ctrl+Y or Ctrl+Shift+Z)" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
     </button>
   </div>
 

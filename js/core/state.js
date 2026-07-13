@@ -1,3 +1,5 @@
+import { pushHistory, undo as historyUndo, redo as historyRedo } from "./history.js";
+
 // State changes listen karne wale functions ka set
 const subscribers = new Set();
 
@@ -7,13 +9,10 @@ export const state = {
   selectedShapeIds: [],
   currentTool: "select",
   viewport: { x: 0, y: 0, zoom: 1 },
-  undoStack: [],
-  redoStack: [],
   clipboard: [],
 
   // Naya shape add karne ke liye
   addShape(shape) {
-    this.pushUndo();
     this.shapes.push(shape);
     this.notify();
   },
@@ -75,36 +74,17 @@ export const state = {
 
   // Current shapes list clone karke history snapshot push karne ke liye
   pushUndo() {
-    const snapshot = JSON.parse(JSON.stringify(this.shapes));
-    this.undoStack.push(snapshot);
-    this.redoStack = [];
-    if (this.undoStack.length > 50) {
-      this.undoStack.shift();
-    }
+    pushHistory();
   },
 
   // Undo operation
   undo() {
-    if (this.undoStack.length === 0) return;
-    const current = JSON.parse(JSON.stringify(this.shapes));
-    this.redoStack.push(current);
-
-    const prev = this.undoStack.pop();
-    this.shapes = prev;
-    this.selectedShapeIds = [];
-    this.notify();
+    historyUndo();
   },
 
   // Redo operation
   redo() {
-    if (this.redoStack.length === 0) return;
-    const current = JSON.parse(JSON.stringify(this.shapes));
-    this.undoStack.push(current);
-
-    const next = this.redoStack.pop();
-    this.shapes = next;
-    this.selectedShapeIds = [];
-    this.notify();
+    historyRedo();
   },
 
   // Selected shapes details clipboard me copy karne ke liye

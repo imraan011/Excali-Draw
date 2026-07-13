@@ -2,6 +2,7 @@ import { state } from "../core/state.js";
 import { screenToWorld } from "../core/coordinates.js";
 import { createShape } from "../shapes/Shape.js";
 import { requestRender } from "../core/canvas.js";
+import { captureBeforeState, pushHistory, discardBeforeState } from "../core/history.js";
 
 /**
  * Shape types ke liye generic drawing tool create karne ka factory helper
@@ -17,6 +18,9 @@ export function createShapeTool(shapeType) {
     name: shapeType,
 
     onPointerDown(e) {
+      // Capture state before shape creation
+      captureBeforeState();
+
       // Screen context points ko current zoom scale coordinates me transform karo
       const coords = screenToWorld(e.clientX, e.clientY, state.viewport);
       startPos = coords;
@@ -56,7 +60,10 @@ export function createShapeTool(shapeType) {
     },
 
     onPointerUp(e) {
-      if (!activeShapeId || !startPos) return;
+      if (!activeShapeId || !startPos) {
+        discardBeforeState();
+        return;
+      }
 
       const currentPos = screenToWorld(e.clientX, e.clientY, state.viewport);
       const width = currentPos.x - startPos.x;
@@ -71,6 +78,10 @@ export function createShapeTool(shapeType) {
       if (isZeroSize) {
         // Accidental clicking shape remove clean settings
         state.removeShape(activeShapeId);
+        discardBeforeState();
+      } else {
+        // Successful drawing, push history
+        pushHistory();
       }
 
       // Local state variables reference reset karein
