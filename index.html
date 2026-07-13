@@ -12,9 +12,13 @@
   <!-- Entry animation (optional — safe to remove this line + the animations/ folder) -->
   <link rel="stylesheet" href="./animations/entry-animation.css">
   
-  <!-- GSAP Library from CDN (belonging to the optional animation block) -->
+  <!-- Scroll animation (optional) -->
+  <link rel="stylesheet" href="./animations/scroll-animation.css">
+  
+  <!-- GSAP & ScrollTrigger Libraries from CDN (belonging to the optional animation block) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <script id="tailwind-config">
     tailwind.config = {
@@ -44,6 +48,9 @@
 </head>
 <body class="bg-background text-on-surface antialiased selection:bg-primary/20 selection:text-primary">
 
+  <!-- Scroll background parallax container (optional) -->
+  <div data-animate="scroll-bg" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
   <!-- Top Navigation (Restrained & Elegant) -->
   <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center px-6 py-2.5 gap-8 bg-black/60 backdrop-blur-xl rounded-full border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.8)] max-w-fit w-max">
     <div class="font-bold text-lg tracking-tight text-white">Sketchflow</div>
@@ -72,7 +79,7 @@
 
   <!-- Live Canvas Product frame (Apple Shot Style) -->
   <section class="max-w-6xl mx-auto px-6 mb-48">
-    <div class="device-frame w-full aspect-[21/9] rounded-3xl overflow-hidden relative border border-white/5 p-4 md:p-8 bg-zinc-950">
+    <div data-animate="demo-canvas" class="device-frame w-full aspect-[21/9] rounded-3xl overflow-hidden relative border border-white/5 p-4 md:p-8 bg-zinc-950">
       <!-- Grid Overlay background -->
       <div class="canvas-grid absolute inset-0 opacity-60"></div>
       
@@ -118,7 +125,7 @@
       
       <!-- Feature 1 -->
       <div data-animate="fade-up" class="flex flex-col items-start">
-        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
+        <div data-animate="drop-in" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
         </div>
         <h3 class="text-white font-semibold text-lg mb-3">Infinite Canvas</h3>
@@ -129,7 +136,7 @@
 
       <!-- Feature 2 -->
       <div data-animate="fade-up" class="flex flex-col items-start">
-        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
+        <div data-animate="drop-in" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
         </div>
         <h3 class="text-white font-semibold text-lg mb-3">Zero Dependencies</h3>
@@ -140,7 +147,7 @@
 
       <!-- Feature 3 -->
       <div data-animate="fade-up" class="flex flex-col items-start">
-        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
+        <div data-animate="drop-in" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 text-white">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
         <h3 class="text-white font-semibold text-lg mb-3">Autosave &amp; Export</h3>
@@ -182,5 +189,8 @@
 
   <!-- Entry animation script (optional — safe to remove this line + the animations/ folder) -->
   <script type="module" src="./animations/entry-animation.js"></script>
+
+  <!-- Scroll animation script (optional) -->
+  <script type="module" src="./animations/scroll-animation.js"></script>
 </body>
 </html>

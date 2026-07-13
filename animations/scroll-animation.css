@@ -1,0 +1,27 @@
+/* scroll-animation.css — CSS configurations for scroll-driven animations */
+
+/* Establish 3D perspective contexts for tilts and parallax layers */
+main {
+  perspective: 1500px;
+  perspective-origin: 50% 30%;
+}
+
+[data-animate="demo-canvas"] {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Background parallax vector outlines shape styling */
+.parallax-shape-svg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.04; /* Very subtle depth, does not distract */
+  will-change: transform;
+}
+
+/* Base styling for the icons floating idle */
+[data-animate="drop-in"] {
+  will-change: transform;
+}

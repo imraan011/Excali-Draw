@@ -12,9 +12,9 @@
 
 ---
 
-Sketchflow is a lightweight, feature-rich whiteboard app inspired by [Excalidraw](https://excalidraw.com). It runs entirely in the browser — no framework, no bundler, no external libraries. Just HTML, CSS, and native ES Modules.
+Sketchflow is a lightweight, feature-rich whiteboard app inspired by Excalidraw. It runs entirely in the browser using vanilla HTML5 Canvas, pure CSS, and native ES Modules.
 
-> Draw shapes, sketch freehand, select and move elements, zoom into an infinite canvas, save your work locally, and export it as a portable JSON file — all without installing anything.
+This version includes a minimal, premium portfolio landing page featuring a live display-only canvas demo, accompanied by optional scroll-driven animations and loading draw-in sequences powered by GSAP.
 
 ---
 
@@ -23,54 +23,44 @@ Sketchflow is a lightweight, feature-rich whiteboard app inspired by [Excalidraw
 ### 🖊 Drawing Tools
 | Tool | How to activate | Description |
 |---|---|---|
-| **Rectangle** | Click toolbar or `R` | Draw rectangles with rounded corners |
-| **Ellipse** | Click toolbar or `E` | Draw ellipses and circles |
-| **Line** | Click toolbar | Draw straight lines |
-| **Arrow** | Click toolbar | Draw lines with arrowheads |
-| **Pencil** | Click toolbar or `P` | Freehand strokes with smooth curves |
-| **Eraser** | Click toolbar | Erase shapes by touching their outline |
-| **Hand** | Click toolbar or hold `Space` | Pan the canvas without drawing |
+| **Select** | Click toolbar, `V`, or `1` | Select, move, and resize shapes |
+| **Hand** | Click toolbar, `H`, or hold `Space` | Pan the viewport without drawing |
+| **Rectangle** | Click toolbar, `R`, or `2` | Draw rectangles with rounded corners |
+| **Ellipse** | Click toolbar, `O`, or `3` | Draw ellipses and circles |
+| **Line** | Click toolbar, `L`, or `4` | Draw straight lines |
+| **Arrow** | Click toolbar, `A`, or `5` | Draw lines with arrowheads |
+| **Pencil** | Click toolbar, `P`, or `6` | Freehand strokes with smooth curves |
+| **Eraser** | Click toolbar | Erase shapes by touching their outlines |
 
 ### 🖱 Select & Edit
-- **Click** a shape to select it — see bounding box with corner resize handles
-- **Drag** to move selected shape(s)
-- **Corner handles** — drag to resize any shape
-- **Multi-select** — click and drag over empty space to draw a selection rectangle; all enclosed shapes are selected and can be moved together
-- **Delete** / **Backspace** — remove selected shapes
-- **Escape** — clear current selection
+- **Resize Handles**: Hovering handles shows appropriate resize cursors (`nwse-resize`, `nesw-resize`, etc.).
+- **Smart Hover Cursors**: Shows `move` when hovering a selected shape body and `pointer` when hovering unselected shapes.
+- **Multi-select**: Click and drag over empty space to marquee-select and group drag multiple elements.
+- **Instant Deletes**: Hit `Delete` / `Backspace` to remove selection, or `Escape` to clear focus.
 
 ### ⌨ Keyboard Shortcuts
-| Shortcut | Action |
-|---|---|
-| `Ctrl + Z` | Undo |
-| `Ctrl + Y` | Redo |
-| `Ctrl + C` | Copy selected shapes |
-| `Ctrl + V` | Paste (with 20px offset per successive paste) |
-| `Delete` / `Backspace` | Delete selected shapes |
-| `Escape` | Deselect all |
-| `Space + Drag` | Pan canvas (any tool) |
-| `Ctrl + 0` | Reset zoom to 100% |
+- `Ctrl + Z` / `Cmd + Z` : Undo drawing, moving, or resizing actions.
+- `Ctrl + Y` / `Ctrl + Shift + Z` : Redo actions.
+- `Ctrl + C` / `Ctrl + V` : Copy and paste selected items (shifts coordinates by a 20px offset).
+- `Ctrl + S` : Trigger instant JSON project export (prevents browser default save dialog).
+- `Ctrl + 0` : Reset zoom and viewport pan back to origin.
+- **Input Guarding**: All shortcut keys are disabled automatically when focus lies in input fields.
 
 ### 🗺 Infinite Canvas
-- **Pan** with `Space + drag`, middle-mouse drag, or the Hand tool
-- **Zoom** with scroll wheel — always anchored to cursor position
-- Zoom range: **10% → 500%**
-- Floating zoom indicator with `+` / `−` / reset controls
+- **Navigation**: Pan with `Space + drag`, middle-mouse drag, or the Hand tool.
+- **Zooming**: Scroll wheel zooms in/out anchored directly to your cursor.
+- **Bounds**: From **10% → 500%** with zoom indicator controls.
 
-### 💾 Persistence
-- **Autosave** — drawing is saved to `localStorage` automatically (debounced 800ms after last edit); survives page refreshes
-- **Export** — download your drawing as a versioned `.json` project file
-- **Import** — load a `.json` project file via file picker or drag-and-drop onto the canvas
-- **Reset** — clear the entire canvas (protected by a non-blocking confirmation modal)
+### 💾 Persistence & Exports
+- **Autosave**: Progress auto-saves to `localStorage` (debounced 800ms after editing).
+- **JSON Export/Import**: Export re-editable `.json` project files, or import them via drag-and-drop.
+- **PNG Export**: Downloads a transparent, content-cropped `.png` image based on the tight bounding box of your shapes.
 
-### 🎨 Design & UX
-- Premium glassmorphic dark UI with dot-grid canvas background
-- MacBook dock-style toolbar: buttons scale up (`scale(1.08)`) and lift (`translateY(-4px)`) on hover
-- Animated Sketchflow logo with pulsing emerald glow
-- Non-blocking custom confirmation modals (no `confirm()` jank — zero INP blocking)
-- Per-tool cursor icons: `crosshair` for drawing, `default` for select, `grab` for hand, `alias` for eraser
-- Toast notifications for import/export results
-- High-DPI / Retina display support via `devicePixelRatio` canvas scaling
+### 🎬 Animations & Landing Page
+- **Apple-Style Landing Page**: A restrained, premium marketing page centered around a live canvas rendering static shapes using the app's real `renderShape` engine.
+- **Entry Drawing Animation (GSAP)**: Simulates a hand sketching out a borders rectangle around the heading and drawing a curved arrow towards the main CTA on load.
+- **Parallax Background**: Layered hand-drawn SVG shapes drift at varied speeds behind the text as you scroll.
+- **3D Tilt Preview**: The product canvas frame tilts forward in 3D space, leveling flat as it enters viewport center.
 
 ---
 
@@ -97,7 +87,7 @@ User Interaction
   renderShape.js       ← pure shape renderers (rectangle, ellipse, line, arrow, pencil)
 ```
 
-Every state mutation (add, update, remove, undo, redo, paste) automatically calls `pushUndo()` before applying the change, and triggers a single `notify()` to re-render.
+History snapshots are deep-cloned via `structuredClone(state.shapes)` to prevent mutations leaking between undo states, and capped at 50 actions to limit memory load.
 
 ---
 
@@ -105,43 +95,37 @@ Every state mutation (add, update, remove, undo, redo, paste) automatically call
 
 ```
 Sketchflow/
-├── index.html                    # App entry point & toolbar HTML
+├── index.html                    # Portfolio landing page
 ├── styles/
-│   └── main.css                  # All styles — dark theme, glassmorphism, modal, animations
-└── js/
-    ├── main.js                   # Bootstrap: registers tools, wires UI, subscribes to state
-    ├── core/
-    │   ├── state.js              # Pub-sub store: shapes, viewport, history, clipboard
-    │   ├── canvas.js             # RAF render loop, dot-grid, selection overlays
-    │   ├── coordinates.js        # screenToWorld / worldToScreen (viewport-aware)
-    │   └── keyboard.js           # Global keyboard shortcuts + spacebar tracking
-    ├── tools/
-    │   ├── ToolManager.js        # Pointer event dispatcher → active tool
-    │   ├── shapeTool.js          # Parameterized factory for rectangle/ellipse/line/arrow
-    │   ├── pencilTool.js         # Freehand stroke capture + smoothing
-    │   ├── selectTool.js         # Click-select, drag-select, move, resize
-    │   ├── eraserTool.js         # Stroke-only hit detection eraser
-    │   ├── panTool.js            # Viewport translation (hand tool)
-    │   └── zoomHandler.js        # Scroll-wheel zoom anchored to cursor
-    ├── shapes/
-    │   ├── Shape.js              # Factory: plain JSON-serializable shape objects
-    │   ├── renderShape.js        # Pure renderers + selection overlay drawing
-    │   ├── hitTest.js            # getShapeAtPoint / getShapeAtStroke / getShapesInRect
-    │   └── bounds.js             # WeakMap-cached bounding box calculations
-    ├── persistence/
-    │   ├── autosave.js           # Debounced localStorage autosave (800ms)
-    │   ├── localStorage.js       # saveToLocalStorage / loadFromLocalStorage
-    │   ├── exportImport.js       # JSON download + file import + toast notifications
-    │   └── schema.js             # validateSaveFile — version + shape + viewport checks
-    └── ui/
-        └── modal.js              # Async non-blocking confirm modal (replaces confirm())
+│   ├── landing.css               # Landing layout presentation styles
+│   └── main.css                  # Core app styles: glassmorphic workspace, modals
+├── js/
+│   ├── landing.js                # Landing page live canvas demo setup
+│   ├── main.js                   # Main application entry coordinator
+│   ├── core/
+│   │   ├── state.js              # Pub-sub store: shapes, viewport, selection
+│   │   ├── history.js            # History manager: undoStack, redoStack, structuredClone
+│   │   ├── canvas.js             # RAF render loop, dot-grid overlays
+│   │   ├── coordinates.js        # Coordinate transformations (viewport relative)
+│   │   └── keyboard.js           # Shortcut actions, input guards
+│   ├── tools/                    # Tool handlers (shapes, pencil, selection, eraser, zoom)
+│   ├── shapes/                   # Shape creation, hit testing, bounds caching, pure renderers
+│   └── persistence/              # LocalStorage, autosave, import/export JSON & PNG
+├── app/
+│   └── index.html                # Isolated main drawing application page
+└── animations/                   # Optional GSAP animations (removable)
+    ├── entry-animation.js        # Timeline loading sketches (Letters, wobble box, arrow)
+    ├── entry-animation.css       # Starting hidden classes under body.js-animating
+    ├── scroll-animation.js       # Parallax SVG generation, icon bobs, 3D tilts
+    ├── scroll-animation.css      # Perspective bounds for 3D transforms
+    └── README.md                 # Removal guide
 ```
 
 ---
 
 ## 🚀 Running Locally
 
-ES Modules require a server (browsers block `file://` imports). Pick any option:
+ES Modules require a server (browsers block local `file://` imports). Pick any option:
 
 ### Node.js (recommended)
 ```bash
@@ -166,56 +150,12 @@ No build step. No install. Open and draw.
 
 | Decision | Rationale |
 |---|---|
-| **No framework** | Zero dependency surface, instant load, full control over render loop |
-| **No bundler** | Native ES Modules work in all modern browsers; no transpilation needed |
-| **Pub-sub state** | Tools and UI never import each other — all communication through `state.js` |
-| **WeakMap bounds cache** | `getShapeBounds` is called every frame; caching avoids redundant geometry math |
-| **requestAnimationFrame batching** | Multiple rapid state changes collapse into one render call |
-| **Stroke-only eraser** | `getShapeAtStroke` tests only shape outlines — clicking inside a rectangle's empty interior does not erase it |
-| **Async confirm modal** | Native `confirm()` blocks the main thread causing ~800ms INP; replaced with a `Promise`-based non-blocking modal |
-| **50-entry undo cap** | Prevents unbounded `undoStack` memory growth |
-| **Versioned save schema** | `version: 1` field in export JSON enables safe future migrations |
-| **Zoom-adaptive eraser tolerance** | `Math.max(8, 12 / viewport.zoom)` keeps the eraser usable at any zoom level |
-
----
-
-## 📋 Save File Format
-
-Exported `.json` files use a stable versioned schema:
-
-```json
-{
-  "version": 1,
-  "shapes": [
-    {
-      "id": "uuid-v4",
-      "type": "rectangle",
-      "x": 120,
-      "y": 80,
-      "width": 200,
-      "height": 100,
-      "strokeColor": "#ffffff",
-      "strokeWidth": 2,
-      "fillColor": "transparent"
-    }
-  ],
-  "viewport": {
-    "x": 0,
-    "y": 0,
-    "zoom": 1
-  }
-}
-```
-
-All shape objects are plain JSON — no class instances, no function references. Safe to serialize, diff, and version control.
-
----
-
-## 🛠 How It Was Built
-
-Sketchflow was developed iteratively — starting with a bare canvas engine and layering tools, selection, infinite canvas, and persistence on top, one piece at a time. The architecture was kept deliberately flat to avoid complexity creep: no classes, no frameworks, no build step.
-
-This project was built with **AI-assisted development** — using an AI coding assistant to accelerate implementation while keeping full ownership of every architectural decision, design choice, and line of shipped code.
+| **No Framework / Bundler** | Zero dependencies, instant load, full control over canvas rendering loop. |
+| **Separated App / Landing** | Isolated layouts in `/index.html` and `/app/index.html` keeps both architectures clean and easy to maintain. |
+| **WeakMap Bounds Cache** | Caches shape bounding boxes inside `bounds.js` to avoid heavy geometric recalculations on select/resize. |
+| **Async Confirm Modals** | Custom `Promise`-based modal avoids standard blocking thread jank of `confirm()`. |
+| **structuredClone History** | Uses native browser cloning rather than slow `JSON.parse(JSON.stringify())` to avoid reference bugs. |
+| **Removable GSAP Layer** | The `animations/` folder operates as an optional layer. Deleting it and its integration lines leaves the landing page fully visible. |
 
 ---
 
@@ -226,5 +166,5 @@ MIT — free to use, fork, and build upon.
 ---
 
 <div align="center">
-  <sub>Built with ✎, zero dependencies, and a little help from AI.</sub>
+  <sub>Built with ✎, vanilla JavaScript, and a little help from AI.</sub>
 </div>
