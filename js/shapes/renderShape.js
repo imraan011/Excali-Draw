@@ -1,4 +1,5 @@
 // Shapes rendering helpers
+import { getSmoothedPath } from "./smoothing.js";
 
 /**
  * Shape data object ko HTML5 Canvas context par render karne ke liye helper function
@@ -82,6 +83,25 @@ export function renderShape(ctx, shape) {
         endY - headLength * Math.sin(angle + headAngle)
       );
       ctx.stroke();
+      break;
+    }
+
+    case "pencil": {
+      if (!shape.points || shape.points.length === 0) break;
+
+      if (shape.points.length < 2) {
+        // Single dot draw karein single clicks visual feedback display ke liye
+        const radius = (shape.strokeWidth || 2) / 2;
+        ctx.beginPath();
+        ctx.arc(shape.points[0].x, shape.points[0].y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = shape.strokeColor || "#ffffff";
+        ctx.fill();
+      } else {
+        // Smoothed Bezier curve stroke trace karein Path2D options use karke
+        const pathString = getSmoothedPath(shape.points);
+        const path2d = new Path2D(pathString);
+        ctx.stroke(path2d);
+      }
       break;
     }
 

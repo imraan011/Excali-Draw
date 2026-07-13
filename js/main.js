@@ -2,6 +2,7 @@ import { state } from "./core/state.js";
 import { initCanvas, resizeCanvas, requestRender } from "./core/canvas.js";
 import { ToolManager } from "./tools/ToolManager.js";
 import { createShapeTool } from "./tools/shapeTool.js";
+import { pencilTool } from "./tools/pencilTool.js";
 
 // Initialize canvas flow
 const canvasElement = document.getElementById("app-canvas");
@@ -16,6 +17,7 @@ ToolManager.registerTool(createShapeTool("rectangle"));
 ToolManager.registerTool(createShapeTool("ellipse"));
 ToolManager.registerTool(createShapeTool("line"));
 ToolManager.registerTool(createShapeTool("arrow"));
+ToolManager.registerTool(pencilTool);
 
 // Phase 2 dummy select tool placeholder register karo
 ToolManager.registerTool({
