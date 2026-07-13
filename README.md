@@ -211,19 +211,11 @@ All shape objects are plain JSON — no class instances, no function references.
 
 ---
 
-## 🗺 Spec / Changelog
+## 🛠 How It Was Built
 
-Detailed implementation notes for each development phase live in [`spec/`](spec/):
+Sketchflow was developed iteratively — starting with a bare canvas engine and layering tools, selection, infinite canvas, and persistence on top, one piece at a time. The architecture was kept deliberately flat to avoid complexity creep: no classes, no frameworks, no build step.
 
-| File | Phase | Contents |
-|---|---|---|
-| [`00_initial_setup.md`](spec/00_initial_setup.md) | Phase 1 | Canvas engine, state store, coordinate system |
-| [`04_phase2_shape_tools.md`](spec/04_phase2_shape_tools.md) | Phase 2 | Rectangle, Ellipse, Line, Arrow tools |
-| [`05_phase3_pencil_tool.md`](spec/05_phase3_pencil_tool.md) | Phase 3 | Freehand pencil strokes |
-| [`06_phase4_select_tool.md`](spec/06_phase4_select_tool.md) | Phase 4 | Select, move, resize, delete |
-| [`07_phase5_infinite_canvas.md`](spec/07_phase5_infinite_canvas.md) | Phase 5 | Pan, zoom, cursor-anchored scroll |
-| [`08_phase6_persistence.md`](spec/08_phase6_persistence.md) | Phase 6 | Autosave, export, import, schema |
-| [`09_advanced_editing_features.md`](spec/09_advanced_editing_features.md) | Advanced | Multi-select, undo/redo, copy/paste, eraser, hand tool |
+This project was built with **AI-assisted development** — using an AI coding assistant to accelerate implementation while keeping full ownership of every architectural decision, design choice, and line of shipped code.
 
 ---
 
@@ -234,5 +226,5 @@ MIT — free to use, fork, and build upon.
 ---
 
 <div align="center">
-  <sub>Built with ✎ and zero dependencies.</sub>
+  <sub>Built with ✎, zero dependencies, and a little help from AI.</sub>
 </div>
